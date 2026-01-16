@@ -38,6 +38,38 @@ The focus of this lab was not on creating detections, but on ensuring that \*\*e
 
 
 
+\## Evidence of Telemetry Pipeline Setup
+
+
+
+The following screenshots document the successful setup and validation of the endpoint telemetry pipeline:
+
+
+
+\- Windows audit policy configuration (process creation, policy change, and account management)
+
+\- Sysmon installation with a custom configuration file
+
+\- Splunk Universal Forwarder running and forwarding events
+
+\- Confirmed ingestion of Windows event data into Splunk
+
+
+
+Screenshots are available in the \[`screenshots/`](./screenshots) directory.
+
+
+
+\### Note on Sysmon Ingestion
+
+
+
+Sysmon was successfully installed and generating rich telemetry locally on the Windows endpoint. However, ingestion of Sysmon events into Splunk proved inconsistent due to underlying system instability. This led to a full endpoint rebuild before detection engineering continued.
+
+
+
+
+
 \## Validation
 
 Controlled actions were performed on the Windows endpoint and validated in Splunk, including:
@@ -87,6 +119,4 @@ This foundation will be used to:
 \- Transition into Linux-based monitoring
 
 \- Deploy and monitor a Cowrie SSH honeypot
-
-
 
