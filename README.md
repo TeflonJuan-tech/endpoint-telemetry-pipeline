@@ -1,122 +1,123 @@
-\# Endpoint Telemetry Pipeline (Windows → Splunk)
+Endpoint Telemetry Pipeline (Windows → Splunk)
 
+This project documents the implementation and validation of a reliable Windows endpoint telemetry pipeline prior to performing detection engineering or alerting.
 
+The objective was not to build detections, but to ensure that endpoint telemetry is complete, stable, and trustworthy before relying on it for security analysis.
 
-This project documents the process of building a \*\*reliable Windows endpoint telemetry pipeline\*\* prior to performing any detection engineering or alerting.
+Objectives
 
+Deploy Sysmon on a Windows endpoint
 
+Enable Windows audit and PowerShell logging
 
-The focus of this lab was not on creating detections, but on ensuring that \*\*endpoint telemetry is complete, trustworthy, and observable\*\* before relying on it for security analysis.
+Configure Splunk Universal Forwarder
 
+Validate reliable event forwarding to Splunk
 
+Identify and resolve ingestion or stability issues
 
-\## Objectives
+Lab Environment
 
-\- Deploy Sysmon on a Windows endpoint
+Host OS: Windows
 
-\- Enable key Windows audit and PowerShell logging
+Guest OS: Windows 10 (VirtualBox VM)
 
-\- Forward logs reliably to Splunk
+SIEM: Splunk Enterprise (Linux VM)
 
-\- Validate end-to-end telemetry
+Endpoint Agent: Splunk Universal Forwarder
 
-\- Identify and resolve common ingestion and stability issues
+Telemetry Sources:
 
+Sysmon
 
+Windows Security logs
 
-\## Lab Environment
+PowerShell logging
 
-\- \*\*Host OS:\*\* Windows
+Windows Audit Policy Configuration
 
-\- \*\*Guest OS:\*\* Windows 10 (VirtualBox)
+Windows audit policies were configured to ensure generation of meaningful security telemetry, including:
 
-\- \*\*SIEM:\*\* Splunk Enterprise (Linux VM)
+Process Creation
 
-\- \*\*Endpoint Agent:\*\* Splunk Universal Forwarder
+Account Management
 
-\- \*\*Telemetry Sources:\*\* Sysmon, Windows Security logs, PowerShell logging
+Policy Change
 
+<img src="./screenshots/audit-policy-enabled.png" width="850">
 
+This ensured foundational event visibility prior to forwarder configuration.
 
-\## Evidence of Telemetry Pipeline Setup
+Sysmon Deployment & Local Telemetry Validation
 
+Sysmon was deployed using a controlled configuration to generate enriched process-level telemetry.
 
+Sysmon Installation Verification
+<img src="./screenshots/sysmon-installed-files.png" width="850">
+Process Creation Event Validation
 
-The following screenshots document the successful setup and validation of the endpoint telemetry pipeline:
+A controlled process execution was performed and verified locally to confirm Sysmon event generation.
 
+<img src="./screenshots/sysmon-process-create-event.png" width="850">
 
+This confirmed endpoint telemetry generation before SIEM ingestion testing.
 
-\- Windows audit policy configuration (process creation, policy change, and account management)
+Splunk Universal Forwarder Configuration
 
-\- Sysmon installation with a custom configuration file
+The Splunk Universal Forwarder was installed and validated to ensure reliable event forwarding.
 
-\- Splunk Universal Forwarder running and forwarding events
+<img src="./screenshots/splunk-forwarder-running.png" width="850">
 
-\- Confirmed ingestion of Windows event data into Splunk
+Forwarder service health was confirmed prior to ingestion validation.
 
+Splunk Ingestion Validation
 
+Windows Security and endpoint telemetry were verified inside Splunk to confirm end-to-end visibility.
 
-Screenshots are available in the \[`screenshots/`](./screenshots) directory.
+<img src="./screenshots/splunk-sourcetype-ingestion-overview.png" width="850">
 
+This confirmed successful data flow from endpoint → forwarder → SIEM.
 
+Sysmon Ingestion Note
 
-\### Note on Sysmon Ingestion
+Sysmon successfully generated enriched endpoint telemetry locally. However, ingestion into Splunk proved inconsistent due to endpoint instability.
 
+The issue was isolated, documented, and resolved through a controlled endpoint rebuild before proceeding to detection engineering.
 
+This reinforced the importance of validating telemetry reliability before building analytics dependent on it.
 
-Sysmon was successfully installed and generating rich telemetry locally on the Windows endpoint. However, ingestion of Sysmon events into Splunk proved inconsistent due to underlying system instability. This led to a full endpoint rebuild before detection engineering continued.
+Validation Activities
 
+Controlled actions were performed on the Windows endpoint and verified in Splunk:
 
+Process execution events
 
+PowerShell command execution
 
+Security log generation
 
-\## Validation
+Successful ingestion confirmed end-to-end visibility from endpoint to SIEM.
 
-Controlled actions were performed on the Windows endpoint and validated in Splunk, including:
+Issues Identified & Resolved
 
-\- Process execution
+During implementation, the following issues were identified and addressed:
 
-\- PowerShell command execution
+Time synchronization drift impacting log correlation
 
-\- Security event generation
+Forwarder service instability
 
+Network configuration inconsistencies
 
+System performance degradation from updates
 
-Successful ingestion confirmed \*\*end-to-end visibility\*\* from endpoint to SIEM.
+Each issue was validated post-remediation to ensure telemetry stability.
 
+Key Lessons
 
+Reliable detection engineering depends on reliable telemetry
 
-\## Issues Encountered \& Resolutions
+Time synchronization is critical for accurate correlation
 
-Common lab issues were encountered and resolved, including:
+Forwarder health must be continuously validated
 
-\- Time drift affecting log correlation
-
-\- Forwarder service instability
-
-\- Network configuration confusion
-
-\- Performance degradation from system updates
-
-
-
-\## Lessons Learned
-
-\- Reliable detection depends on reliable telemetry
-
-\- Time synchronization is critical for log analysis
-
-\- Forwarder stability must be verified, not assumed
-
-
-
-\## Next Steps
-
-This foundation will be used to:
-
-\- Detect authentication abuse patterns
-
-\- Transition into Linux-based monitoring
-
-\- Deploy and monitor a Cowrie SSH honeypot
-
+Telemetry validation must precede detection development
